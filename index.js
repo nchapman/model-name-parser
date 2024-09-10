@@ -22,7 +22,7 @@ function parseModelName(fileName) {
 
     // Quantization
     // Matches this list: https://github.com/ggerganov/llama.cpp/blob/master/examples/quantize/quantize.cpp
-    else if (part.match(/^(T?I?Q\d_.*)|(B?F\d+)$/i)) {
+    else if (part.match(/^(T?I?Q\d_.*)|(B?FP?\d+)$/i)) {
       quantization = part;
     }
 
@@ -60,15 +60,13 @@ function parseModelName(fileName) {
     name = name.replace(extension, "");
   }
 
-  // Replace double dashes with single dash
-  name = name.replace(/\-{2,}/g, "-");
-
-  // Replace multiple dots with single dot
-  name = name.replace(/\.{2,}/g, ".");
+  // Replace double characters with single character
+  name = name.replace(/\-{2,}/g, "-").replace(/\.{2,}/g, ".");
 
   // Trim trailing characters
   name = name.replace(/[\-\.\s]+$/, "");
 
+  // TODO: Add long name that has all the parts in it
   return {
     name,
     parameters,
@@ -77,18 +75,58 @@ function parseModelName(fileName) {
     instruct,
     extension,
     formatted: {
-      name: titleCase(name.replace(/-/g, " ")),
+      name: toTitleCase(name.replace(/-/g, " ")),
       parameters: parameters ? parameters.toUpperCase() : null,
       context: context ? context.toUpperCase() : null,
       quantization: quantization ? quantization.toUpperCase() : null,
-      instruct: instruct ? titleCase(instruct) : null,
+      instruct: instruct ? toTitleCase(instruct) : null,
+      extension: extension ? extension.toUpperCase() : null,
     },
   };
 }
 
-// Just uppercases the first letter of each word. Doesn't change other
-function titleCase(str) {
-  return str.replace(/\b\w/g, (char) => char.toUpperCase());
+// Modernized version of: https://github.com/gouch/to-title-case/blob/master/to-title-case.js
+function toTitleCase(text) {
+  const smallWords =
+    /^(a|an|and|as|at|but|by|en|for|if|in|nor|of|on|or|per|the|to|v.?|vs.?|via)$/i;
+  const alphanumericPattern = /([A-Za-z0-9\u00C0-\u00FF])/;
+  const wordSeparators = /([ :–—-])/;
+
+  return text
+    .split(wordSeparators)
+    .map((current, index, array) => {
+      if (
+        /* Check for small words */
+        current.search(smallWords) > -1 &&
+        /* Skip first and last word */
+        index !== 0 &&
+        index !== array.length - 1 &&
+        /* Ignore title end and subtitle start */
+        array[index - 3] !== ":" &&
+        array[index + 1] !== ":" &&
+        /* Ignore small words that start a hyphenated phrase */
+        (array[index + 1] !== "-" ||
+          (array[index - 1] === "-" && array[index + 1] === "-"))
+      ) {
+        return current.toLowerCase();
+      }
+
+      /* Ignore intentional capitalization */
+      if (current.substr(1).search(/[A-Z]|\../) > -1) {
+        return current;
+      }
+
+      /* Ignore URLs */
+      if (array[index + 1] === ":" && array[index + 2] !== "") {
+        return current;
+      }
+
+      /* Capitalize the first letter */
+      return current.replace(alphanumericPattern, (match) =>
+        match.toUpperCase()
+      );
+    })
+    .join("");
 }
 
 const modelNames = [
@@ -147,6 +185,7 @@ const modelNames = [
 
 const shuffledModelNames = modelNames.sort(() => Math.random() - 0.5);
 
-for (let modelName of modelNames) {
+for (let modelName of shuffledModelNames) {
+  console.log(modelName);
   console.log(parseModelName(modelName));
 }
