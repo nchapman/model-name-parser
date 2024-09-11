@@ -1,3 +1,22 @@
+/**
+ * Parses the model name and extracts information from the given file name.
+ *
+ * @param {string} fileName - The name of the file to parse.
+ * @returns {object} - An object containing the extracted information from the file name.
+ * @property {string} name - The original file name.
+ * @property {string} parameters - The parameters extracted from the file name.
+ * @property {string} context - The context extracted from the file name.
+ * @property {string} quantization - The quantization extracted from the file name.
+ * @property {string} instruct - The instruct extracted from the file name.
+ * @property {string} extension - The extension extracted from the file name.
+ * @property {object} formatted - An object containing the formatted extracted parts.
+ * @property {string} formatted.name - The formatted name with hyphens replaced by spaces and each word capitalized.
+ * @property {string} formatted.parameters - The formatted parameters in uppercase.
+ * @property {string} formatted.context - The formatted context in uppercase.
+ * @property {string} formatted.quantization - The formatted quantization in uppercase.
+ * @property {string} formatted.instruct - The formatted instruct with each word capitalized.
+ * @property {string} formatted.extension - The formatted extension in uppercase.
+ */
 export function parseModelName(fileName) {
   const nameParts = fileName.split(/[\.\-]/);
 
