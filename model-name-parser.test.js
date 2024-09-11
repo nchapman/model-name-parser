@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { parseModelName as p } from "./modelNameParser.js";
+import { parseModelName as p } from "./model-name-parser.js";
 import exp from "constants";
 
 test("extract number of parameters", () => {
