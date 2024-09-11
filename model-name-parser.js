@@ -27,7 +27,7 @@ export function parseModelName(fileName) {
     quantization: null,
     instruct: null,
     extension: null,
-    formatted: null,
+    formatted: null
   };
 
   // Loop through parts and extract information
@@ -82,16 +82,29 @@ export function parseModelName(fileName) {
     context: result.context?.toUpperCase() || null,
     quantization: result.quantization?.toUpperCase() || null,
     instruct: result.instruct ? toTitleCase(result.instruct) : null,
-    extension: result.extension?.toUpperCase() || null,
+    extension: result.extension?.toUpperCase() || null
   };
 
   return result;
 }
 
+/**
+ * Formats the model name result based on the provided keys.
+ *
+ * @param {Object} result - The result object containing formatted values.
+ * @param {Array} keys - The keys to be used for formatting the result.
+ * @returns {string} - The formatted model name result.
+ */
+export function formatModelNameResult(result, keys) {
+  return keys
+    .map((key) => result.formatted[key])
+    .filter(Boolean)
+    .join(" ");
+}
+
 // Based on: https://github.com/gouch/to-title-case/blob/master/to-title-case.js
 function toTitleCase(text) {
-  const smallWords =
-    /^(a|an|and|as|at|but|by|en|for|if|in|nor|of|on|or|per|the|to|v.?|vs.?|via)$/i;
+  const smallWords = /^(a|an|and|as|at|but|by|en|for|if|in|nor|of|on|or|per|the|to|v.?|vs.?|via)$/i;
   const alphanumericPattern = /([A-Za-z0-9\u00C0-\u00FF])/;
   const wordSeparators = /([ :–—-])/;
 
@@ -108,8 +121,7 @@ function toTitleCase(text) {
         array[index - 3] !== ":" &&
         array[index + 1] !== ":" &&
         /* Ignore small words that start a hyphenated phrase */
-        (array[index + 1] !== "-" ||
-          (array[index - 1] === "-" && array[index + 1] === "-"))
+        (array[index + 1] !== "-" || (array[index - 1] === "-" && array[index + 1] === "-"))
       ) {
         return current.toLowerCase();
       }
@@ -125,9 +137,7 @@ function toTitleCase(text) {
       }
 
       /* Capitalize the first letter */
-      return current.replace(alphanumericPattern, (match) =>
-        match.toUpperCase()
-      );
+      return current.replace(alphanumericPattern, (match) => match.toUpperCase());
     })
     .join("");
 }

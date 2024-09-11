@@ -1,23 +1,19 @@
 import { expect, test } from "vitest";
-import { parseModelName as p } from "./model-name-parser.js";
+import { parseModelName as p, formatModelNameResult as f } from "./model-name-parser.js";
 import exp from "constants";
 
-test("extract number of parameters", () => {
+test("parseModelName parameters", () => {
   expect(p("Reflection-Llama-3.1-70B-IQ2_M.gguf").parameters).toBe("70B");
   expect(p("dolphin-2.9.1-yi-1.5-9b-q4_k_m.gguf").parameters).toBe("9b");
   expect(p("dolphin-2.9.1-yi-1.5-q4_k_m.gguf").parameters).toBe(null);
 });
 
-test("extract name", () => {
-  expect(p("Reflection-Llama-3.1-70B-IQ2_M.gguf").name).toBe(
-    "Reflection-Llama-3.1"
-  );
-  expect(p("dolphin-2.9.1-yi-1.5-9b-q4_k_m.gguf").name).toBe(
-    "dolphin-2.9.1-yi-1.5"
-  );
+test("parseModelName name", () => {
+  expect(p("Reflection-Llama-3.1-70B-IQ2_M.gguf").name).toBe("Reflection-Llama-3.1");
+  expect(p("dolphin-2.9.1-yi-1.5-9b-q4_k_m.gguf").name).toBe("dolphin-2.9.1-yi-1.5");
 });
 
-test("extract quantization", () => {
+test("parseModelName quantization", () => {
   expect(p("Reflection-70B-IQ2_M.gguf").quantization).toBe("IQ2_M");
   expect(p("Reflection-70B-Q4_K_M.gguf").quantization).toBe("Q4_K_M");
   expect(p("Reflection-70B-TQ2_0.gguf").quantization).toBe("TQ2_0");
@@ -29,22 +25,22 @@ test("extract quantization", () => {
   expect(p("dolphin-2.9.1-yi-1.5-9b.gguf").quantization).toBe(null);
 });
 
-test("extract context", () => {
+test("parseModelName context", () => {
   expect(p("dolphin-2.2-yi-34b-200k.IQ3_M.gguf").context).toBe("200k");
 });
 
-test("extract instruct", () => {
+test("parseModelName instruct", () => {
   expect(p("qwen2-7b-instruct-fp16.gguf").instruct).toBe("instruct");
   expect(p("qwen2-7b-fp16.gguf").instruct).toBe(null);
 });
 
-test("extract extension", () => {
+test("parseModelName extension", () => {
   expect(p("qwen2-7b-instruct-fp16.gguf").extension).toBe("gguf");
   expect(p("qwen2-7b-instruct-fp16.zip").extension).toBe(null);
   expect(p("qwen2-7b-instruct-fp16").extension).toBe(null);
 });
 
-test("format", () => {
+test("parseModelName format", () => {
   const { formatted } = p("dolphin-2.9.1-yi-1.5-9b-instruct-128k-q4_k_m.gguf");
 
   expect(formatted.name).toBe("Dolphin 2.9.1 Yi 1.5");
@@ -54,7 +50,7 @@ test("format", () => {
   expect(formatted.instruct).toBe("Instruct");
 });
 
-test("format null values", () => {
+test("parseModelName format null values", () => {
   const { formatted } = p("hello-world");
 
   expect(formatted.name).toBe("Hello World");
@@ -64,8 +60,48 @@ test("format null values", () => {
   expect(formatted.instruct).toBe(null);
 });
 
-test("format name with special capitalization", () => {
-  expect(p("ArliAI-RPMax-12B-v1.1-fp16.gguf").formatted.name).toBe(
-    "ArliAI RPMax v1.1"
-  );
+test("parseModelName format name with special capitalization", () => {
+  expect(p("ArliAI-RPMax-12B-v1.1-fp16.gguf").formatted.name).toBe("ArliAI RPMax v1.1");
+});
+
+test("formatModelNameResult with all keys", () => {
+  const result = p("dolphin-2.9.1-yi-1.5-9b-instruct-128k-q4_k_m.gguf");
+  const formattedName = f(result, [
+    "name",
+    "parameters",
+    "context",
+    "quantization",
+    "instruct",
+    "extension"
+  ]);
+
+  expect(formattedName).toBe("Dolphin 2.9.1 Yi 1.5 9B 128K Q4_K_M Instruct GGUF");
+});
+
+test("formatModelNameResult with some keys", () => {
+  const result = p("dolphin-2.9.1-yi-1.5-9b-instruct-128k-q4_k_m.gguf");
+  const formattedName = f(result, ["name", "parameters", "context"]);
+
+  expect(formattedName).toBe("Dolphin 2.9.1 Yi 1.5 9B 128K");
+});
+
+test("formatModelNameResult with no keys", () => {
+  const result = p("dolphin-2.9.1-yi-1.5-9b-instruct-128k-q4_k_m.gguf");
+  const formattedName = f(result, []);
+
+  expect(formattedName).toBe("");
+});
+
+test("formatModelNameResult with null values", () => {
+  const result = p("hello-world");
+  const formattedName = f(result, [
+    "name",
+    "parameters",
+    "context",
+    "quantization",
+    "instruct",
+    "extension"
+  ]);
+
+  expect(formattedName).toBe("Hello World");
 });
