@@ -3,10 +3,15 @@
   "version": "1.0.0",
   "main": "modelNameParser.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "author": "",
   "license": "ISC",
   "description": "",
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@vitest/coverage-v8": "^2.0.5",
+    "vitest": "^2.0.5"
+  }
 }
