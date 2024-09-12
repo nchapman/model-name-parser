@@ -13,6 +13,8 @@ const result = parseModelName(fileName);
 console.log(result);
 ```
 
+### Output
+
 ```json
 {
   "name": "dolphin-2.2-yi",
@@ -47,11 +49,41 @@ The function returns an object with the following properties:
 - `instruct` (string): The instruct extracted from the file name.
 - `extension` (string): The extension extracted from the file name.
 - `formatted` (object): An object containing the formatted extracted parts.
+
   - `formatted.name` (string): The formatted name with hyphens replaced by spaces and each word capitalized.
   - `formatted.parameters` (string): The formatted parameters in uppercase.
   - `formatted.context` (string): The formatted context in uppercase.
   - `formatted.quantization` (string): The formatted quantization in uppercase.
   - `formatted.instruct` (string): The formatted instruct with each word capitalized.
   - `formatted.extension` (string): The formatted extension in uppercase.
+
+## Formatting the result
+
+To format the result of the parsed model name, you can use the `formatModelNameResult` function.
+
+### Usage
+
+```javascript
+import { parseModelName, formatModelNameResult } from "./model-name-parser";
+
+const fileName = "dolphin-2.2-yi-34b-200k.q4_k_s.gguf";
+const result = parseModelName(fileName);
+const formattedResult = formatModelNameResult(result, [
+  "name",
+  "parameters",
+  "context",
+  "instruct",
+  "quantization",
+  "extension"
+]);
+
+console.log(formattedResult);
+```
+
+### Output
+
+```json
+"Dolphin 2.2 Yi 34B 200K Q4_K_S GGUF"
+```
 
 Please note that this function assumes a specific file name format and may not work correctly with other formats.
