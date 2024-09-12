@@ -7,10 +7,29 @@ This function `parseModelName` is used to parse the model name and extract infor
 ```javascript
 import { parseModelName } from "./model-name-parser";
 
-const fileName = "Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf";
+const fileName = "dolphin-2.2-yi-34b-200k.q4_k_s.gguf";
 const result = parseModelName(fileName);
 
 console.log(result);
+```
+
+```json
+{
+  "name": "dolphin-2.2-yi",
+  "parameters": "34b",
+  "context": "200k",
+  "quantization": "q4_k_s",
+  "instruct": null,
+  "extension": "gguf",
+  "formatted": {
+    "name": "Dolphin 2.2 Yi",
+    "parameters": "34B",
+    "context": "200K",
+    "quantization": "Q4_K_S",
+    "instruct": null,
+    "extension": "GGUF"
+  }
+}
 ```
 
 ## Parameters
