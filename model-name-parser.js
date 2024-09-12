@@ -95,7 +95,10 @@ export function parseModelName(fileName) {
  * @param {Array} keys - The keys to be used for formatting the result.
  * @returns {string} - The formatted model name result.
  */
-export function formatModelNameResult(result, keys) {
+export function formatModelNameResult(
+  result,
+  keys = ["name", "parameters", "context", "instruct", "quantization", "extension"]
+) {
   return keys
     .map((key) => result.formatted[key])
     .filter(Boolean)

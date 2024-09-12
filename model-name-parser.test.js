@@ -105,3 +105,10 @@ test("formatModelNameResult with null values", () => {
 
   expect(formattedName).toBe("Hello World");
 });
+
+test("formatModelNameResult with default keys", () => {
+  const result = p("ArliAI-RPMax-12B-v1.1-Q6_K.gguf");
+  const formattedName = f(result);
+
+  expect(formattedName).toBe("ArliAI RPMax v1.1 12B Q6_K GGUF");
+});
